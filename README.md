@@ -1,6 +1,5 @@
 # three.js-demo
-Demonstration der Funktionsweise von three.js im Studiengang B.S. Media Systems, Modul CGA 
-
+Demonstration of how three.js works in the B.S. Media Systems course, CGA module.
 
 For this sample to work you need to implement the following libraries:
 
