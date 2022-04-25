@@ -5,6 +5,8 @@ import Television from './objects/Television.js';
 
 let plane;
 let pointLight;
+let ambientLight;
+let tv = new Television();
 
 function main() {
     //Initializing the camera, scene and window
@@ -24,7 +26,7 @@ function main() {
 
     //Initializing the geometric objects
     planeInit();
-    window.scene.add(Television);
+    window.scene.add(tv);
 
     mainLoop();
 
@@ -93,13 +95,18 @@ function planeInit() {
 }
 
 //Light functions
+function ambientLightInit() {
+    ambientLight = new THREE.AmbientLight(0xFFFFFF);
+    ambientLight.intensity = 0.5;
+    window.scene.add(ambientLight);
+}
 function pointLightInit() {
     pointLight = new THREE.PointLight(0xFFFFFF); //Color value
     pointLight.position.set(15, 20, 20); //Position
-    pointLight.intensity = 1; //Intensity (Default: 1)
+    pointLight.intensity = 2; //Intensity (Default: 1)
 
     pointLight.castShadow = true; //Shadow activated
-    pointLight.shadow.mapSize.set(1024, 1024);
+    pointLight.shadow.mapSize.set(1024*2, 1024*2);
 
     /*pointLight.shadow.camera.aspect = 1;
     pointLight.shadow.camera.near = 10;

@@ -64,7 +64,7 @@ export default class Television extends THREE.Group {
     corpusGeometry.computeVertexNormals();
     const corpus = new THREE.Mesh(corpusGeometry, corpusMaterial);
     corpus.castShadow = true;
-    corpus.position.set(0, 0, 0);
+    corpus.scale.set(0.1, 0.1, 0.1);
     this.add(corpus);
   }
 }
