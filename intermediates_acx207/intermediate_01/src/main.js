@@ -6,7 +6,7 @@ let sphere;
 let cube;
 let plane;
 let pointLight;
-let orbitControls;
+let cubeSphereGroup;
 
 function main() {
   //Initializing the camera, scene and window
@@ -15,7 +15,7 @@ function main() {
   windowInit();
 
   //Using the Orbit Controls
-  orbitControls = new CONTROLS.OrbitControls(window.camera, window.renderer.domElement);
+  let orbitControls = new CONTROLS.OrbitControls(window.camera, window.renderer.domElement);
   orbitControls.target = new THREE.Vector3(0,0,0); //replaces window.camera.lookAt(0, 0, 0)
 
   //Integration of the renderer output into the HTML structure
@@ -27,6 +27,7 @@ function main() {
   //Initializing the geometric objects
   cubeInit();
   sphereInit();
+  createGroup();
   planeInit();
 
   mainLoop();
@@ -85,8 +86,14 @@ function guiInit() {
   lightFolder.add(pointLight.position, 'y', -50, 50);
   lightFolder.add(pointLight.position, 'z', -50, 50);
 
-  cameraFolder.open()
+  const cubeSphereGroupFolder = gui.addFolder('Cube-Sphere Group')
+  cubeSphereGroupFolder.add(cubeSphereGroup.position, 'x', -50, 50);
+  cubeSphereGroupFolder.add(cubeSphereGroup.position, 'y', -50, 50);
+  cubeSphereGroupFolder.add(cubeSphereGroup.position, 'z', -50, 50);
+
+  cameraFolder.open();
   lightFolder.open();
+  cubeSphereGroupFolder.open();
 
   /*  gui.add(sphere.position, 'x', -50, 50);
   gui.add(cube.position, 'x', -50, 50);
@@ -101,7 +108,8 @@ function cubeInit() {
   cube.castShadow = true;
 
   cube.position.set(-6, 3, 5); //Position in world coordinates
-  window.scene.add(cube); //Add to scene
+
+  //window.scene.add(cube); --> currently took over by group
 }
 function sphereInit() {
   let sphereGeometry = new THREE.SphereGeometry(5, 10, 10);
@@ -109,7 +117,8 @@ function sphereInit() {
   sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
   sphere.castShadow = true;
   sphere.position.set(10, 5, -5);
-  window.scene.add(sphere);
+
+ // window.scene.add(sphere); --> currently took over by group
 }
 function planeInit() {
   let planeGeometry = new THREE.PlaneGeometry(40, 40);
@@ -141,4 +150,11 @@ function pointLightInit() {
 
   window.scene.add(new THREE.CameraHelper(pointLight.shadow.camera)); //Shadow camera
   window.scene.add(pointLight); //Add to scene
+}
+
+function createGroup() {
+  cubeSphereGroup = new THREE.Group(); //creates a group object
+  cubeSphereGroup.add(cube); //Adds the cube and sphere geometry to the group
+  cubeSphereGroup.add(sphere);
+  window.scene.add(cubeSphereGroup); //Adds the whole group to the scene
 }
