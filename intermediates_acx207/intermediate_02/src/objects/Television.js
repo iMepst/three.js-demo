@@ -108,11 +108,15 @@ export default class Television extends THREE.Group {
     const powerKnob = new THREE.Mesh(knobGeometry, metalMaterial).add(new THREE.Mesh(knobGripGeometry, metalMaterial));
     powerKnob.rotation.set(THREE.MathUtils.degToRad(90), 0, 0);
     powerKnob.position.set(0, 7.8, 0.5);
+    powerKnob.name = 'powerKnob';
+    powerKnob.children[0].name = 'powerKnob'
     panel.add(powerKnob);
 
     //Volume Knob
     const volumeKnob = powerKnob.clone();
     volumeKnob.position.set(0, 3, 0.5);
+    volumeKnob.name = 'volumeKnob';
+    volumeKnob.children[0].name = 'volumeKnob'
     panel.add(volumeKnob);
 
     //Antenna Foot
@@ -150,6 +154,7 @@ export default class Television extends THREE.Group {
     antenna.position.set(0, 14.7, -6.5);
     antenna.rotation.set(THREE.MathUtils.degToRad(80), 0, 0);
     antenna.castShadow = true;
+    antenna.name = 'antenna';
     this.add(antenna);
 
   }
