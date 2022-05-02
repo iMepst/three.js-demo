@@ -1,3 +1,5 @@
+// noinspection DuplicatedCode
+
 import * as THREE from 'three';
 import * as DATGUI from 'datgui';
 import * as CONTROLS from 'controls';
@@ -6,6 +8,7 @@ import Television from './objects/Television.js';
 let plane;
 let pointLight;
 let ambientLight;
+let spotLight;
 let tv = new Television();
 
 function main() {
@@ -26,12 +29,13 @@ function main() {
 
     //Initializing the geometric objects
     planeInit();
+    tv.position.set(0, 16.8, 0)
     window.scene.add(tv);
 
     mainLoop();
 
     //Initializing the light and the GUI
-    pointLightInit();
+    spotLightInit();
     guiInit();
 
     orbitControls.update(); //Activate/acquire the target
@@ -47,7 +51,7 @@ function mainLoop() {
 //Scene, window, camera and GUI functions
 function sceneInit() {
     window.scene = new THREE.Scene(); //Scene graph Object
-    window.scene.add(new THREE.AxesHelper(20)); //Length of the Coordinate axes
+    window.scene.add(new THREE.AxesHelper(50)); //Length of the Coordinate axes
 }
 function windowInit() {
     window.renderer = new THREE.WebGLRenderer({antialias: true}); //Renderer-Object
@@ -69,23 +73,23 @@ function cameraInit() {
         0.1, //Distance of the near-plane
         1000); //Distance of the far-plane
 
-    window.camera.position.set(30, 40, 50);
+    window.camera.position.set(-100, 100, 100);
 
 }
 function guiInit() {
     let gui = new DATGUI.GUI();
 
-    const lightFolder = gui.addFolder('Point Light');
-    lightFolder.add(pointLight.position, 'x', -50, 50);
-    lightFolder.add(pointLight.position, 'y', -50, 50);
-    lightFolder.add(pointLight.position, 'z', -50, 50);
+    const lightFolder = gui.addFolder('Spot Light');
+    lightFolder.add(spotLight.position, 'x', 0, 200);
+    lightFolder.add(spotLight.position, 'y', 0, 200);
+    lightFolder.add(spotLight.position, 'z', 0, 200);
 
     lightFolder.open();
 }
 
 //Object functions
 function planeInit() {
-    let planeGeometry = new THREE.PlaneGeometry(40, 40);
+    let planeGeometry = new THREE.PlaneGeometry(200, 200);
     let planeMaterial = new THREE.MeshLambertMaterial({color: 0x888888, side: THREE.DoubleSide, wireframe: false});
     plane = new THREE.Mesh(planeGeometry, planeMaterial);
 
@@ -114,4 +118,20 @@ function pointLightInit() {
 
     window.scene.add(new THREE.CameraHelper(pointLight.shadow.camera)); //Shadow camera
     window.scene.add(pointLight); //Add to scene
+}
+function spotLightInit() {
+    spotLight = new THREE.SpotLight(0xffffff);
+    spotLight.position.set(100, 100, 100);
+    spotLight.intensity = 2;
+    spotLight.target = plane;
+    spotLight.angle = THREE.MathUtils.degToRad(30);
+    spotLight.penumbra = 1;
+    spotLight.castShadow = true;
+    spotLight.shadow.mapSize.set(2048, 2048);
+    spotLight.shadow.camera.aspect = 1;
+    spotLight.shadow.camera.near = 10;
+    spotLight.shadow.camera.far = 500;
+    window.scene.add(new THREE.CameraHelper(spotLight.shadow.camera));
+    window.scene.add(spotLight);
+
 }

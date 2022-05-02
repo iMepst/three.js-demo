@@ -11,6 +11,8 @@ export default class Television extends THREE.Group {
   addParts() {
 
     const corpusMaterial = new THREE.MeshPhongMaterial({color: 0xff4000, flatShading: true});
+    const frontMaterial = new THREE.MeshPhongMaterial({color: 0x000000, flatShading: true});
+    const screenMaterial = new THREE.MeshPhongMaterial({color: 0xffffff, flatShading: true});
 
     // Corpus
     // ------
@@ -64,7 +66,12 @@ export default class Television extends THREE.Group {
     corpusGeometry.computeVertexNormals();
     const corpus = new THREE.Mesh(corpusGeometry, corpusMaterial);
     corpus.castShadow = true;
-    corpus.scale.set(0.1, 0.1, 0.1);
-    this.add(corpus);
+    this.add(corpus)
+
+    const cavityGeometry = new THREE.BufferGeometry();
+    cavityGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+    cavityGeometry.setIndex(indices.slice(0, 36));
+    cavityGeometry.computeVertexNormals();
+
   }
 }
