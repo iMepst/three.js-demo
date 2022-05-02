@@ -115,5 +115,42 @@ export default class Television extends THREE.Group {
     volumeKnob.position.set(0, 3, 0.5);
     panel.add(volumeKnob);
 
+    //Antenna Foot
+    const antennaFootGeometry = new THREE.CylinderGeometry(1, 1, 5, 16);
+    const antennaFoot = new THREE.Mesh(antennaFootGeometry, metalMaterial);
+    antennaFoot.rotation.set(0, 0, THREE.MathUtils.degToRad(90));
+    antennaFoot.position.set(0, 14, -6.5);
+    this.add(antennaFoot);
+
+    //Antenna
+    const antennaShape = new THREE.Shape().absellipse(
+        0, 0,
+        0.2, 0.2,
+        0, THREE.MathUtils.degToRad(360)
+    );
+    const antennaSpline = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-1, 0, 0),
+      new THREE.Vector3(-1, 3, 0),
+      new THREE.Vector3(-15, 3, 0),
+      new THREE.Vector3(-15, 17, 0),
+      new THREE.Vector3(15, 17, 0),
+      new THREE.Vector3(15, 3, 0),
+      new THREE.Vector3(1, 3, 0),
+      new THREE.Vector3(1, 0, 0)
+    ]);
+    antennaSpline.curveType = 'catmullrom';
+    antennaSpline.tension = 0.0;
+    const extrudeSettings = {
+      steps: 100,
+      curveSegments: 100,
+      extrudePath: antennaSpline
+    };
+    const antennaGeometry = new THREE.ExtrudeGeometry(antennaShape, extrudeSettings);
+    const antenna = new THREE.Mesh(antennaGeometry, metalMaterial);
+    antenna.position.set(0, 14.7, -6.5);
+    antenna.rotation.set(THREE.MathUtils.degToRad(80), 0, 0);
+    antenna.castShadow = true;
+    this.add(antenna);
+
   }
 }
