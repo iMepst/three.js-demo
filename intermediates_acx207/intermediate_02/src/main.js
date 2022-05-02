@@ -1,9 +1,11 @@
-// noinspection DuplicatedCode
-
 import * as THREE from 'three';
 import * as DATGUI from 'datgui';
 import * as CONTROLS from 'controls';
 import Television from './objects/Television.js';
+
+//Event functions
+//import {calculateMousePosition} from './eventfunctions/calculateMousePosition';
+//import {executeRaycast} from "./eventfunctions/executeRaycast";
 
 let plane;
 let pointLight;
@@ -39,14 +41,19 @@ function main() {
     guiInit();
 
     orbitControls.update(); //Activate/acquire the target
+
+    //window.onmousemove = calculateMousePosition;
+
 }
-
-window.onload = main; //fired when the entire page loads, including its content
-
 function mainLoop() {
     window.renderer.render(window.scene, window.camera); //Rendering the scene
     requestAnimationFrame(mainLoop); //Request for the next possible execution of the mainLoop()
 }
+
+window.onload = main; //fired when the entire page loads, including its content
+window.onmousemove = calculateMousePosition;
+window.onclick = executeRaycast;
+
 
 //Scene, window, camera and GUI functions
 function sceneInit() {
@@ -135,3 +142,20 @@ function spotLightInit() {
     window.scene.add(spotLight);
 
 }
+
+window.mousePosition = new THREE.Vector2();
+function calculateMousePosition(event) {
+    window.mousePosition.x = 2 * (event.clientX / window.innerWidth) - 1;
+    window.mousePosition.y = -2 * (event.clientY / window.innerHeight) + 1;
+
+    //console.log(window.mousePosition.x + "\t" + window.mousePosition.x);
+}
+
+window.raycaster = new THREE.Raycaster();
+export function executeRaycast() {
+    window.raycaster.setFromCamera(window.mousePosition, window.camera);
+    let intersects = window.raycaster.intersectObjects(window.scene, true);
+
+    console.log(intersects.length);
+}
+
