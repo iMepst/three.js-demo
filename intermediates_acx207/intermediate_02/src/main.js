@@ -4,14 +4,16 @@ import * as CONTROLS from 'controls';
 import Television from './objects/Television.js';
 
 //Event functions
-//import {calculateMousePosition} from './eventfunctions/calculateMousePosition';
-//import {executeRaycast} from "./eventfunctions/executeRaycast";
+import {calculateMousePosition} from "./eventfunctions/calculateMousePosition.js";
+import {executeRaycast} from "./eventfunctions/executeRaycast.js";
 
 let plane;
 let pointLight;
 let ambientLight;
 let spotLight;
 let tv = new Television();
+let powerKnob = tv.children[3].children[0];
+const clock = new THREE.Clock();
 
 function main() {
     //Initializing the camera, scene and window
@@ -42,10 +44,13 @@ function main() {
 
     orbitControls.update(); //Activate/acquire the target
 
-    //window.onmousemove = calculateMousePosition;
+    window.televisionPowerOn = false;
 
 }
+
+
 function mainLoop() {
+    knobTurn();
     window.renderer.render(window.scene, window.camera); //Rendering the scene
     requestAnimationFrame(mainLoop); //Request for the next possible execution of the mainLoop()
 }
@@ -53,7 +58,6 @@ function mainLoop() {
 window.onload = main; //fired when the entire page loads, including its content
 window.onmousemove = calculateMousePosition;
 window.onclick = executeRaycast;
-
 
 //Scene, window, camera and GUI functions
 function sceneInit() {
@@ -143,22 +147,21 @@ function spotLightInit() {
 
 }
 
-window.mousePosition = new THREE.Vector2();
-function calculateMousePosition(event) {
-    window.mousePosition.x = 2 * (event.clientX / window.innerWidth) - 1;
-    window.mousePosition.y = -2 * (event.clientY / window.innerHeight) + 1;
+//Animation
+function knobTurn() {
+    const delta = clock.getDelta();
 
-    //console.log(window.mousePosition.x + "\t" + window.mousePosition.x);
-}
-
-window.raycaster = new THREE.Raycaster();
-export function executeRaycast() {
-    window.raycaster.setFromCamera(window.mousePosition, window.camera);
-    let intersects = window.raycaster.intersectObject(window.scene, true);
-
-    if(intersects.length > 0) {
-        let firstHit = intersects[0].object;
-        console.log(firstHit.name);
+    if (window.televisionPowerOn) {
+        if (powerKnob.rotation.y > THREE.MathUtils.degToRad(-90)){
+            powerKnob.rotation.y -= THREE.MathUtils.degToRad(360) * delta;
+        } else {
+            powerKnob.rotation.y = THREE.MathUtils.degToRad(-90);
+        }
+    } else {
+        if (powerKnob.rotation.y < 0) {
+            powerKnob.rotation.y += THREE.MathUtils.degToRad(360) * delta;
+        } else {
+            powerKnob.rotation.y = 0;
+        }
     }
 }
-

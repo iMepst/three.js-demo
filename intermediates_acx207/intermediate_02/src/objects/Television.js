@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import CSG from 'csg';
+import {Animation, AnimationType, AnimationAxis} from "../animation/Animation.js";
 
 export default class Television extends THREE.Group {
 
