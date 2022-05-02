@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import CSG from 'csg';
 
 export default class Television extends THREE.Group {
 
@@ -65,13 +66,33 @@ export default class Television extends THREE.Group {
     corpusGeometry.setIndex(indices);
     corpusGeometry.computeVertexNormals();
     const corpus = new THREE.Mesh(corpusGeometry, corpusMaterial);
-    corpus.castShadow = true;
-    this.add(corpus)
+
 
     const cavityGeometry = new THREE.BufferGeometry();
     cavityGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
     cavityGeometry.setIndex(indices.slice(0, 36));
     cavityGeometry.computeVertexNormals();
+    cavityGeometry.translate(0, 0.4, 4);
+    cavityGeometry.scale(1, 0.98, 1);
+    const cavity = new THREE.Mesh(cavityGeometry, corpusMaterial);
+    const corpusCSG = CSG.fromMesh(corpus);
+    const cavityCSG = CSG.fromMesh(cavity);
+    const hollowCorpus = CSG.toMesh(corpusCSG.subtract(cavityCSG), corpus.matrix, corpus.material);
+
+    hollowCorpus.castShadow = true;
+    this.add(hollowCorpus)
+
+    //Front
+    const frontGeometry = new THREE.PlaneGeometry(48, 32);
+    const front = new THREE.Mesh(frontGeometry, frontMaterial);
+    front.position.set(0, 1.5, 15.5);
+    this.add(front);
+
+    //Screen
+    const screenGeometry = new THREE.BoxGeometry(26, 22, 22);
+    const screen = new THREE.Mesh(screenGeometry, screenMaterial);
+    screen.position.set(-5.7, 2, 6);
+    this.add(screen);
 
   }
 }
