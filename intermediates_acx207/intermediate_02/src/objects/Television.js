@@ -14,6 +14,8 @@ export default class Television extends THREE.Group {
     const corpusMaterial = new THREE.MeshPhongMaterial({color: 0xff4000, flatShading: true});
     const frontMaterial = new THREE.MeshPhongMaterial({color: 0x000000, flatShading: true});
     const screenMaterial = new THREE.MeshPhongMaterial({color: 0xffffff, flatShading: true});
+    const panelMaterial = new THREE.MeshPhongMaterial({color: 0x111111, flatShading: true});
+    const metalMaterial = new THREE.MeshPhongMaterial({color:0xe7e7e7, flatShading: true});
 
     // Corpus
     // ------
@@ -93,6 +95,25 @@ export default class Television extends THREE.Group {
     const screen = new THREE.Mesh(screenGeometry, screenMaterial);
     screen.position.set(-5.7, 2, 6);
     this.add(screen);
+
+    //Panel
+    const panelGeometry = new THREE.BoxGeometry(8, 22, 1);
+    const panel = new THREE.Mesh(panelGeometry, panelMaterial);
+    panel.position.set(17.5, 2, 15.5);
+    this.add(panel);
+
+    //Power Knob
+    const knobGeometry = new THREE.CylinderGeometry(1.8, 1.8, 1, 32);
+    const knobGripGeometry = new THREE.BoxGeometry(0.4, 1, 3).translate(0, 1, 0);
+    const powerKnob = new THREE.Mesh(knobGeometry, metalMaterial).add(new THREE.Mesh(knobGripGeometry, metalMaterial));
+    powerKnob.rotation.set(THREE.MathUtils.degToRad(90), 0, 0);
+    powerKnob.position.set(0, 7.8, 0.5);
+    panel.add(powerKnob);
+
+    //Volume Knob
+    const volumeKnob = powerKnob.clone();
+    volumeKnob.position.set(0, 3, 0.5);
+    panel.add(volumeKnob);
 
   }
 }
