@@ -11,9 +11,12 @@ export function executeRaycast() {
         let name = firstHit.name;
         console.log(name);
 
-        if(name === ('powerKnob')) {
-            window.televisionPowerOn = !window.televisionPowerOn;
-            console.log(window.televisionPowerOn);
+        if(name === 'powerKnob' || name === 'volumeKnob') {
+            if(firstHit.children.length > 0){
+                firstHit.linearAnimation.toggleEndPosition();
+            } else {
+                firstHit.parent.linearAnimation.toggleEndPosition();
+            }
         }
     }
 }

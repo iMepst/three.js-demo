@@ -12,7 +12,6 @@ let pointLight;
 let ambientLight;
 let spotLight;
 let tv = new Television();
-let powerKnob = tv.children[3].children[0];
 const clock = new THREE.Clock();
 
 function main() {
@@ -43,14 +42,11 @@ function main() {
     guiInit();
 
     orbitControls.update(); //Activate/acquire the target
-
-    window.televisionPowerOn = false;
-
 }
 
 
 function mainLoop() {
-    knobTurn();
+    knobTurnAuto();
     window.renderer.render(window.scene, window.camera); //Rendering the scene
     requestAnimationFrame(mainLoop); //Request for the next possible execution of the mainLoop()
 }
@@ -148,7 +144,9 @@ function spotLightInit() {
 }
 
 //Animation
-function knobTurn() {
+function knobTurnManual() {
+    let powerKnob = tv.children[3].children[0];
+    window.televisionPowerOn = false;
     const delta = clock.getDelta();
 
     if (window.televisionPowerOn) {
@@ -164,4 +162,9 @@ function knobTurn() {
             powerKnob.rotation.y = 0;
         }
     }
+}
+function knobTurnAuto(){
+    const delta = clock.getDelta();
+    tv.animations.forEach(function (animation){animation.update(delta)});
+
 }

@@ -6,7 +6,7 @@ export default class Television extends THREE.Group {
 
   constructor() {
     super();
-
+    this.animations = [];
     this.addParts();
   }
 
@@ -113,12 +113,26 @@ export default class Television extends THREE.Group {
     powerKnob.children[0].name = 'powerKnob'
     panel.add(powerKnob);
 
+    //Power Knob Animation
+    const powerKnobAnimation = new Animation(powerKnob, AnimationType.ROTATION, AnimationAxis.Y);
+    powerKnobAnimation.setAmount(THREE.MathUtils.degToRad(-90));
+    powerKnobAnimation.setSpeed(THREE.MathUtils.degToRad(360));
+    powerKnob.linearAnimation = powerKnobAnimation;
+    this.animations.push(powerKnobAnimation);
+
     //Volume Knob
     const volumeKnob = powerKnob.clone();
     volumeKnob.position.set(0, 3, 0.5);
     volumeKnob.name = 'volumeKnob';
     volumeKnob.children[0].name = 'volumeKnob'
     panel.add(volumeKnob);
+    
+    //Volume Knob Animation
+    const volumeKnobAnimation = new Animation(volumeKnob, AnimationType.ROTATION, AnimationAxis.Y);
+    volumeKnobAnimation.setAmount(THREE.MathUtils.degToRad(-90));
+    volumeKnobAnimation.setSpeed(THREE.MathUtils.degToRad(360));
+    volumeKnob.linearAnimation = volumeKnobAnimation;
+    this.animations.push(volumeKnobAnimation);
 
     //Antenna Foot
     const antennaFootGeometry = new THREE.CylinderGeometry(1, 1, 5, 16);
