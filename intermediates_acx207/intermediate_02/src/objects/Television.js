@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import CSG from 'csg';
+import * as TWEEN from 'tween';
 import {Animation, AnimationType, AnimationAxis} from "../animation/Animation.js";
 
 export default class Television extends THREE.Group {
@@ -167,10 +168,15 @@ export default class Television extends THREE.Group {
     const antennaGeometry = new THREE.ExtrudeGeometry(antennaShape, extrudeSettings);
     const antenna = new THREE.Mesh(antennaGeometry, metalMaterial);
     antenna.position.set(0, 14.7, -6.5);
-    antenna.rotation.set(THREE.MathUtils.degToRad(80), 0, 0);
+    antenna.rotation.set(THREE.MathUtils.degToRad(-80), 0, 0);
     antenna.castShadow = true;
     antenna.name = 'antenna';
     this.add(antenna);
 
+    //Antenna Animation
+    antenna.tweenAnimation = new TWEEN.Tween(antenna.rotation).to(new THREE.Vector3(
+        antenna.rotation.x - THREE.MathUtils.degToRad(-80),
+        antenna.rotation.y,
+        antenna.rotation.z), 2000).easing(TWEEN.Easing.Quadratic.Out);
   }
 }

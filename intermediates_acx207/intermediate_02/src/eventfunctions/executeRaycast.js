@@ -17,6 +17,8 @@ export function executeRaycast() {
             } else {
                 firstHit.parent.linearAnimation.toggleEndPosition();
             }
+        } else if (name === 'antenna') {
+            firstHit.tweenAnimation.start();
         }
     }
 }

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as DATGUI from 'datgui';
 import * as CONTROLS from 'controls';
+import * as TWEEN from 'tween';
 import Television from './objects/Television.js';
 
 //Event functions
@@ -47,6 +48,7 @@ function main() {
 
 function mainLoop() {
     knobTurnAuto();
+    TWEEN.update();
     window.renderer.render(window.scene, window.camera); //Rendering the scene
     requestAnimationFrame(mainLoop); //Request for the next possible execution of the mainLoop()
 }
