@@ -26,7 +26,12 @@ export default class Television extends THREE.Group {
             transparent: true,
             opacity: 0.2
         });
-        const panelMaterial = new THREE.MeshPhongMaterial({color: 0x111111, flatShading: true});
+        const panelMaterial = new THREE.MeshPhongMaterial({color: 0x191919, flatShading: true});
+        const panelMaterialTextured = new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            flatShading: true,
+            map: new THREE.TextureLoader().load('src/images/panelTexture.png')
+        });
         const metalMaterial = new THREE.MeshStandardMaterial({
             color: 0xe7e7e7,
             flatShading: false,
@@ -122,7 +127,8 @@ export default class Television extends THREE.Group {
 
         //Panel
         const panelGeometry = new THREE.BoxGeometry(8, 22, 1);
-        const panel = new THREE.Mesh(panelGeometry, panelMaterial);
+        const panel = new THREE.Mesh(panelGeometry,
+            [panelMaterial, panelMaterial, panelMaterial, panelMaterial, panelMaterialTextured, panelMaterial]);
         panel.position.set(17.5, 2, 15.5);
         this.add(panel);
 
