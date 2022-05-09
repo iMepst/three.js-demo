@@ -34,6 +34,14 @@ export default class Television extends THREE.Group {
             metalness: 0.4
         });
 
+        const path = "../../lib/three.js-r115/examples/textures/cube/Bridge2/";
+        const images = [path + "posx.jpg", path + "negx.jpg", path + "posy.jpg", path + "negy.jpg", path + "posz.jpg", path + "negz.jpg"];
+        const envMap = new THREE.CubeTextureLoader().load(images);
+        envMap.mapping = THREE.CubeReflectionMapping;
+        envMap.encoding = THREE.LinearEncoding;
+        metalMaterial.envMap = envMap;
+        metalMaterial.envMapIntensity = 2.0;
+
         // Corpus
         // ------
         const positions = [
