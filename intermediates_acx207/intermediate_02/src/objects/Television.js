@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 import CSG from 'csg';
 import * as TWEEN from 'tween';
+
 import {Animation, AnimationType, AnimationAxis} from "../animation/Animation.js";
+import {GridShader} from "../shaders/GridShader.js";
 
 export default class Television extends THREE.Group {
 
@@ -44,6 +46,14 @@ export default class Television extends THREE.Group {
             color: 0xffffff,
             flatShading: true,
             map: new THREE.TextureLoader().load('src/images/panelTexture.png')
+        });
+        const speakerMaterial = new THREE.ShaderMaterial({
+           vertexShader: GridShader.vertexShader,
+           fragmentShader: GridShader.fragmentShader,
+           uniforms: {
+               color: {type: 'c', value: new THREE.Color(0x000000)},
+               slots: {type: 'f', value: 11.0}
+           }
         });
         const metalMaterial = new THREE.MeshStandardMaterial({
             color: 0xe7e7e7,
@@ -151,6 +161,12 @@ export default class Television extends THREE.Group {
             [panelMaterial, panelMaterial, panelMaterial, panelMaterial, panelMaterialTextured, panelMaterial]);
         panel.position.set(17.5, 2, 15.5);
         this.add(panel);
+
+        //Speaker
+        const speakerGeometry = new THREE.PlaneGeometry(6, 10);
+        const speaker = new THREE.Mesh(speakerGeometry, speakerMaterial);
+        speaker.position.set(0, -5, 0.6);
+        panel.add(speaker);
 
         //Power Knob
         const knobGeometry = new THREE.CylinderGeometry(1.8, 1.8, 1, 32);
