@@ -19,7 +19,20 @@ export default class Television extends THREE.Group {
             specular: 0x111111,
             shininess: 100
         });
-        const frontMaterial = new THREE.MeshPhongMaterial({color: 0x000000, flatShading: true});
+        const ventilationMaterial = new THREE.MeshPhongMaterial({
+            color: 0xff4000,
+            flatShading: true,
+            specular: 0x111111,
+            shininess: 100,
+            bumpMap: new THREE.TextureLoader().load('src/images/corpusVentilation.png'),
+            bumpScale: 1.0
+        });
+        const frontMaterial = new THREE.MeshPhongMaterial({
+            color: 0x111111,
+            flatShading: true,
+            bumpMap: new THREE.TextureLoader().load('src/images/frontFrame.png'),
+            bumpScale: 1.0
+        });
         const screenMaterial = new THREE.MeshPhongMaterial({
             color: 0xffffff,
             flatShading: true,
@@ -113,6 +126,13 @@ export default class Television extends THREE.Group {
         hollowCorpus.castShadow = true;
         this.add(hollowCorpus)
 
+        //Ventilation
+        const ventilationGeometry = new THREE.PlaneGeometry(33, 24);
+        const ventilation = new THREE.Mesh(ventilationGeometry, ventilationMaterial);
+        ventilation.rotation.set(0, THREE.MathUtils.degToRad(180), 0);
+        ventilation.position.set(0, -1, -18.1);
+        hollowCorpus.add(ventilation);
+
         //Front
         const frontGeometry = new THREE.PlaneGeometry(48, 32);
         const front = new THREE.Mesh(frontGeometry, frontMaterial);
@@ -120,9 +140,9 @@ export default class Television extends THREE.Group {
         this.add(front);
 
         //Screen
-        const screenGeometry = new THREE.BoxGeometry(26, 22, 22);
+        const screenGeometry = new THREE.BoxGeometry(26, 22, 1);
         const screen = new THREE.Mesh(screenGeometry, screenMaterial);
-        screen.position.set(-5.7, 2, 6);
+        screen.position.set(-5.7, 2, 15.5);
         this.add(screen);
 
         //Panel
