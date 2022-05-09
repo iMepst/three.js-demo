@@ -18,7 +18,15 @@ export function executeRaycast() {
                 firstHit.parent.linearAnimation.toggleEndPosition();
             }
         } else if (name === 'antenna') {
-            firstHit.tweenAnimation.start();
+            firstHit.up = !firstHit.up;
+            if (firstHit.up) {
+                firstHit.tweenAnimationDown.stop();
+                firstHit.tweenAnimationUp.start();
+            } else {
+                firstHit.tweenAnimationUp.stop();
+                firstHit.tweenAnimationDown.start();
+            }
+
         }
     }
 }
