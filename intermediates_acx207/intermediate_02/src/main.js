@@ -3,12 +3,15 @@ import * as DATGUI from 'datgui';
 import * as CONTROLS from 'controls';
 import * as TWEEN from 'tween';
 
+//Own modules
 import Television from './objects/Television.js';
+import Floor from "./objects/Floor.js";
 
 //Event functions
 import {calculateMousePosition} from "./eventfunctions/calculateMousePosition.js";
 import {executeRaycast} from "./eventfunctions/executeRaycast.js";
 
+let floor;
 let plane;
 let pointLight;
 let ambientLight;
@@ -33,7 +36,7 @@ function main() {
     window.addEventListener( 'resize', onWindowResize, false );
 
     //Initializing the geometric objects
-    planeInit();
+    floorInit();
     tv.position.set(0, 16.8, 0)
     window.scene.add(tv);
 
@@ -107,6 +110,11 @@ function planeInit() {
     plane.rotation.x = Math.PI / 2;
     window.scene.add(plane);
 }
+function floorInit() {
+    floor = new Floor();
+    floor.position.set(0, 0, 0);
+    window.scene.add(floor);
+}
 
 //Light functions
 function ambientLightInit() {
@@ -133,7 +141,7 @@ function spotLightInit() {
     spotLight = new THREE.SpotLight(0xffffff);
     spotLight.position.set(100, 100, 100);
     spotLight.intensity = 2;
-    spotLight.target = plane;
+    spotLight.target = floor;
     spotLight.angle = THREE.MathUtils.degToRad(30);
     spotLight.penumbra = 1;
     spotLight.castShadow = true;
