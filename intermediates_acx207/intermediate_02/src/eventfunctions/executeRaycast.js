@@ -26,7 +26,7 @@ export function executeRaycast() {
                 firstHit.tweenAnimationUp.stop();
                 firstHit.tweenAnimationDown.start();
             }
-        } else if (firstHit.name === 'powerKnobGLTF') {
+        } else if (name === 'powerKnobGLTF') {
             firstHit.parentTelevision.state.powerOn = !firstHit.parentTelevision.state.powerOn;
             if (firstHit.parentTelevision.state.powerOn) {
                 firstHit.parentTelevision.animations.get('powerKnob_off').stop();
@@ -35,7 +35,7 @@ export function executeRaycast() {
                 firstHit.parentTelevision.animations.get('powerKnob_on').stop();
                 firstHit.parentTelevision.animations.get('powerKnob_off').play();
             }
-        } else if (firstHit.name === 'volumeKnobGLTF') {
+        } else if (name === 'volumeKnobGLTF') {
             firstHit.parentTelevision.state.volumeHigh = !firstHit.parentTelevision.state.volumeHigh;
             if (firstHit.parentTelevision.state.volumeHigh) {
                 firstHit.parentTelevision.animations.get('volumeKnob_low').stop();
@@ -44,8 +44,15 @@ export function executeRaycast() {
                 firstHit.parentTelevision.animations.get('volumeKnob_high').stop();
                 firstHit.parentTelevision.animations.get('volumeKnob_low').play();
             }
+        } else if (name === 'antennaGLTF') {
+            firstHit.parentTelevision.state.antennaUp = !firstHit.parentTelevision.state.antennaUp;
+            if (firstHit.parentTelevision.state.antennaUp) {
+                firstHit.parentTelevision.animations.get('antenna_down').stop();
+                firstHit.parentTelevision.animations.get('antenna_up').play();
+            } else {
+                firstHit.parentTelevision.animations.get('antenna_up').stop();
+                firstHit.parentTelevision.animations.get('antenna_down').play();
+            }
         }
-
-
     }
 }

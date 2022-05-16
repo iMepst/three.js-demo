@@ -42,7 +42,6 @@ export default class TelevisionFromFile extends THREE.Group {
                 action.clampWhenFinished = true;
                 action.setLoop(THREE.LoopOnce);
                 thisTelevision.animations.set(gltf.animations[i].name, action);
-                console.log(gltf.animations[i].name);
             }
             thisTelevision.add(gltf.scene);
         });

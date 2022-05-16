@@ -6,6 +6,7 @@ import * as TWEEN from 'tween';
 //Own modules
 import Television from './objects/Television.js';
 import TelevisionFromFile from './objects/TelevisionFromFile.js';
+import TableFromFile from "./objects/TableFromFile.js";
 import Floor from "./objects/Floor.js";
 
 //Event functions
@@ -19,6 +20,7 @@ let ambientLight;
 let spotLight;
 let tv = new Television();
 const tvff = new TelevisionFromFile();
+const tableff = new TableFromFile();
 const clock = new THREE.Clock();
 const delta = clock.getDelta();
 
@@ -40,11 +42,14 @@ function main() {
 
     //Initializing the geometric objects
     floorInit();
-    tv.position.set(-30, 16.8, 0);
-    tvff.position.set(30, 16.8, 0);
+    tv.position.set(-30, 55, 0);
+    tv.rotation.set(0, THREE.MathUtils.degToRad(10), 0);
+    tvff.position.set(30, 55, 0);
+    tvff.rotation.set(0, THREE.MathUtils.degToRad(-10), 0);
+    tableff.position.set(0, 0, 0);
     window.scene.add(tv);
     window.scene.add(tvff);
-
+    window.scene.add(tableff);
 
     mainLoop();
 
