@@ -22,7 +22,6 @@ let tv = new Television();
 const tvff = new TelevisionFromFile();
 const tableff = new TableFromFile();
 const clock = new THREE.Clock();
-const delta = clock.getDelta();
 
 function main() {
     //Initializing the camera, scene and window
@@ -62,7 +61,8 @@ function main() {
 
 
 function mainLoop() {
-    knobTurnAuto();
+    const delta = clock.getDelta();
+    knobTurnAuto(delta);
     TWEEN.update();
     if (tvff.animationMixer !== null) {
         tvff.animationMixer.update(delta);
@@ -100,7 +100,7 @@ function cameraInit() {
         0.1, //Distance of the near-plane
         1000); //Distance of the far-plane
 
-    window.camera.position.set(-100, 100, 100);
+    window.camera.position.set(-100, 200, 200);
 
 }
 function guiInit() {
@@ -153,8 +153,8 @@ function pointLightInit() {
 }
 function spotLightInit() {
     spotLight = new THREE.SpotLight(0xffffff);
-    spotLight.position.set(100, 100, 100);
-    spotLight.intensity = 2;
+    spotLight.position.set(100, 200, 200);
+    spotLight.intensity = 1.5;
     spotLight.target = floor;
     spotLight.angle = THREE.MathUtils.degToRad(30);
     spotLight.penumbra = 1;
@@ -188,11 +188,7 @@ function knobTurnManual() {
         }
     }
 }
-function knobTurnAuto(){
+function knobTurnAuto(delta){
     tv.animations.forEach(function (animation){animation.update(delta)});
-
-}
-function gltfAnimation() {
-    const delta = clock.getDelta();
 
 }
