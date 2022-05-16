@@ -5,6 +5,7 @@ import * as TWEEN from 'tween';
 
 //Own modules
 import Television from './objects/Television.js';
+import TelevisionFromFile from './objects/TelevisionFromFile.js';
 import Floor from "./objects/Floor.js";
 
 //Event functions
@@ -17,7 +18,9 @@ let pointLight;
 let ambientLight;
 let spotLight;
 let tv = new Television();
+const tvff = new TelevisionFromFile();
 const clock = new THREE.Clock();
+const delta = clock.getDelta();
 
 function main() {
     //Initializing the camera, scene and window
@@ -37,8 +40,11 @@ function main() {
 
     //Initializing the geometric objects
     floorInit();
-    tv.position.set(0, 16.8, 0)
+    tv.position.set(-30, 16.8, 0);
+    tvff.position.set(30, 16.8, 0);
     window.scene.add(tv);
+    window.scene.add(tvff);
+
 
     mainLoop();
 
@@ -53,6 +59,9 @@ function main() {
 function mainLoop() {
     knobTurnAuto();
     TWEEN.update();
+    if (tvff.animationMixer !== null) {
+        tvff.animationMixer.update(delta);
+    }
     window.renderer.render(window.scene, window.camera); //Rendering the scene
     requestAnimationFrame(mainLoop); //Request for the next possible execution of the mainLoop()
 }
@@ -93,9 +102,9 @@ function guiInit() {
     let gui = new DATGUI.GUI();
 
     const lightFolder = gui.addFolder('Spot Light');
-    lightFolder.add(spotLight.position, 'x', 0, 200);
-    lightFolder.add(spotLight.position, 'y', 0, 200);
-    lightFolder.add(spotLight.position, 'z', 0, 200);
+    lightFolder.add(spotLight.position, 'x', -300, 300);
+    lightFolder.add(spotLight.position, 'y', -300, 300);
+    lightFolder.add(spotLight.position, 'z', -300, 300);
 
     lightFolder.open();
 }
@@ -175,7 +184,10 @@ function knobTurnManual() {
     }
 }
 function knobTurnAuto(){
-    const delta = clock.getDelta();
     tv.animations.forEach(function (animation){animation.update(delta)});
+
+}
+function gltfAnimation() {
+    const delta = clock.getDelta();
 
 }
