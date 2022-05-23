@@ -8,6 +8,7 @@ import Television from './objects/Television.js';
 import TelevisionFromFile from './objects/TelevisionFromFile.js';
 import TableFromFile from "./objects/TableFromFile.js";
 import Floor from "./objects/Floor.js";
+import Physics from './physics/Physics.js';
 
 //Event functions
 import {calculateMousePosition} from "./eventfunctions/calculateMousePosition.js";
@@ -33,6 +34,9 @@ function main() {
     let orbitControls = new CONTROLS.OrbitControls(window.camera, window.renderer.domElement);
     orbitControls.target = new THREE.Vector3(0,0,0); //replaces window.camera.lookAt(0, 0, 0)
 
+    //Intializing the physics
+    physicInit();
+
     //Integration of the renderer output into the HTML structure
     document.getElementById('3d_content').appendChild(window.renderer.domElement);
 
@@ -46,6 +50,7 @@ function main() {
     tvff.position.set(30, 55, 0);
     tvff.rotation.set(0, THREE.MathUtils.degToRad(-10), 0);
     tableff.position.set(0, 0, 0);
+    tableff.addPhysics();
     window.scene.add(tv);
     window.scene.add(tvff);
     window.scene.add(tableff);
@@ -61,12 +66,13 @@ function main() {
 
 
 function mainLoop() {
-    const delta = clock.getDelta();
+    const delta = clock.getDelta(); //Time since last frame
     knobTurnAuto(delta);
-    TWEEN.update();
+    TWEEN.update(); //Update tweens
     if (tvff.animationMixer !== null) {
         tvff.animationMixer.update(delta);
     }
+    window.physics.update(delta); //Update the physics
     window.renderer.render(window.scene, window.camera); //Rendering the scene
     requestAnimationFrame(mainLoop); //Request for the next possible execution of the mainLoop()
 }
@@ -75,7 +81,7 @@ window.onload = main; //fired when the entire page loads, including its content
 window.onmousemove = calculateMousePosition;
 window.onclick = executeRaycast;
 
-//Scene, window, camera and GUI functions
+//Scene, window, camera, GUI and physics functions
 function sceneInit() {
     window.scene = new THREE.Scene(); //Scene graph Object
     window.scene.add(new THREE.AxesHelper(50)); //Length of the Coordinate axes
@@ -112,6 +118,10 @@ function guiInit() {
     lightFolder.add(spotLight.position, 'z', -300, 300);
 
     lightFolder.open();
+}
+function physicInit() {
+    window.physics = new Physics(true);
+    window.physics.setup(0, -200, 0, 1/20, true);
 }
 
 //Object functions

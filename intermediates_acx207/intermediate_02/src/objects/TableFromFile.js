@@ -6,6 +6,7 @@ export default class TableFromFile extends THREE.Group {
         super();
 
         this.gltfLoader = new GLTFLoader();
+        this.loadingDone = false;
         this.load(this);
     }
 
@@ -17,7 +18,15 @@ export default class TableFromFile extends THREE.Group {
                 }
             });
             thisTable.add(gltf.scene);
+            thisTable.loadingDone = true;
         });
+    }
 
+    addPhysics () {
+        if (this.loadingDone === false) {
+            window.setTimeout(this.addPhysics.bind(this), 100);
+        } else {
+            window.physics.addBox(this, 10, 150, 39, 62, 0, 19.5, 0);
+        }
     }
 }
