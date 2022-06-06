@@ -78,6 +78,7 @@ export default class Television extends THREE.Group {
         document.television_movie.src = 'src/videos/movie.mp4';
         document.television_movie.loop = true;
         this.movieTexture = new THREE.VideoTexture(document.television_movie);
+
         videoPlaneMaterial.map = this.blackTexture;
 
         const envMap = new THREE.TextureLoader()

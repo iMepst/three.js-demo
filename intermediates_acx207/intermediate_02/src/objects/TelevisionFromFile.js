@@ -9,6 +9,9 @@ export default class TelevisionFromFile extends THREE.Group {
         this.animationMixer = null;
         this.animations = new Map();
         this.loadingDone = false;
+        this.blackTexture = null;
+        this.noiseTexture = null;
+        this.movieTexture = null;
         this.load(this);
 
         this.state = {
@@ -34,6 +37,32 @@ export default class TelevisionFromFile extends THREE.Group {
                    child.material.envMap = envMap;
                    child.material.envMapIntensity = 10.0;
                }
+               if (child.name === 'screenGLTF') {
+                   const videoPlaneMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
+                   thisTelevision.blackTexture = new THREE.TextureLoader().load('src/images/black.png');
+
+                   document.televisionFromFile_noise = document.createElement('video');
+                   document.televisionFromFile_noise.src = 'src/videos/noise.mp4';
+                   document.televisionFromFile_noise.loop = true;
+                   thisTelevision.noiseTexture = new THREE.VideoTexture(document.televisionFromFile_noise);
+
+                   document.televisionFromFile_movie = document.createElement('video');
+                   document.televisionFromFile_movie.src = 'src/videos/movie.mp4';
+                   document.televisionFromFile_movie.loop = true;
+                   thisTelevision.movieTexture = new THREE.VideoTexture(document.televisionFromFile_movie);
+                   videoPlaneMaterial.map = thisTelevision.blackTexture;
+
+                   const videoPlaneGeometry = new THREE.PlaneGeometry(26, 22);
+                   thisTelevision.videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
+                   thisTelevision.videoPlane.position.set(0, 0, 0.12);
+                   thisTelevision.videoPlane.scale.set(0.06, 0.06, 0.06);
+                   thisTelevision.videoPlane.name = 'videoPlane';
+                   child.add(thisTelevision.videoPlane);
+
+                   child.material.format = THREE.RGBAFormat;
+                   child.material.transparent = true;
+                   child.material.opacity = 0.4;
+               }
                child.castShadow = true;
             });
 
@@ -46,8 +75,43 @@ export default class TelevisionFromFile extends THREE.Group {
             }
             thisTelevision.add(gltf.scene);
             thisTelevision.loadingDone = true;
-
+            thisTelevision.animationMixer.addEventListener('finished', thisTelevision.updateFunctionalState.bind(thisTelevision));
         });
+    }
+
+    updateFunctionalState() {
+        let videoPlane = null;
+        this.traverse(function (child) {
+            if (child.name === 'videoPlane') {
+                videoPlane = child;
+            }
+        });
+
+        if (this.state.powerOn) {
+            if (this.state.antennaUp) {
+                document.televisionFromFile_noise.pause();
+                document.televisionFromFile_movie.play();
+                videoPlane.material.map = this.movieTexture;
+                if (this.state.volumeHigh) {
+                    document.televisionFromFile_movie.volume = 1.0;
+                } else {
+                    document.televisionFromFile_movie.volume = 0.5;
+                }
+            } else {
+                document.televisionFromFile_movie.pause();
+                document.televisionFromFile_noise.play();
+                videoPlane.material.map = this.noiseTexture;
+                if (this.state.volumeHigh) {
+                    document.televisionFromFile_noise.volume = 1.0;
+                } else {
+                    document.televisionFromFile_noise.volume = 0.5;
+                }
+            }
+        } else {
+            document.televisionFromFile_noise.pause();
+            document.televisionFromFile_movie.pause();
+            videoPlane.material.map = this.blackTexture;
+        }
     }
 
     addPhysics () {
