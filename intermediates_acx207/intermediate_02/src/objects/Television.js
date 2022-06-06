@@ -10,6 +10,9 @@ export default class Television extends THREE.Group {
     constructor() {
         super();
         this.animations = [];
+        this.blackTexture = null;
+        this.noiseTexture = null;
+        this.movieTexture = null;
         this.loadingDone = false;
         this.addParts();
     }
@@ -62,6 +65,20 @@ export default class Television extends THREE.Group {
             roughness: 0.0,
             metalness: 0.4
         });
+
+        const videoPlaneMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
+        this.blackTexture = new THREE.TextureLoader().load('src/images/black.png');
+
+        document.television_noise = document.createElement('video');
+        document.television_noise.src = 'src/videos/noise.mp4';
+        document.television_noise.loop = true;
+        this.noiseTexture = new THREE.VideoTexture(document.television_noise);
+
+        document.television_movie = document.createElement('video');
+        document.television_movie.src = 'src/videos/movie.mp4';
+        document.television_movie.loop = true;
+        this.movieTexture = new THREE.VideoTexture(document.television_movie);
+        videoPlaneMaterial.map = this.blackTexture;
 
         const envMap = new THREE.TextureLoader()
             .load('../../lib/three.js-r139/examples/textures/2294472375_24a3b8ef46_o.jpg');
@@ -156,6 +173,12 @@ export default class Television extends THREE.Group {
         screen.position.set(-5.7, 2, 15.5);
         this.add(screen);
 
+        //Video Plane
+        const videoPlaneGeometry = new THREE.PlaneGeometry(26, 22);
+        const videoPlane = new THREE.Mesh(videoPlaneGeometry, videoPlaneMaterial);
+        videoPlane.position.set(0, 0, 0.12);
+        screen.add(videoPlane);
+
         //Panel
         const panelGeometry = new THREE.BoxGeometry(8, 22, 1);
         const panel = new THREE.Mesh(panelGeometry,
@@ -183,6 +206,7 @@ export default class Television extends THREE.Group {
         const powerKnobAnimation = new Animation(powerKnob, AnimationType.ROTATION, AnimationAxis.Y);
         powerKnobAnimation.setAmount(THREE.MathUtils.degToRad(-90));
         powerKnobAnimation.setSpeed(THREE.MathUtils.degToRad(360));
+        powerKnobAnimation.onComplete(this.updateFunctionalState.bind(this));
         powerKnob.linearAnimation = powerKnobAnimation;
         this.animations.push(powerKnobAnimation);
 
@@ -197,6 +221,7 @@ export default class Television extends THREE.Group {
         const volumeKnobAnimation = new Animation(volumeKnob, AnimationType.ROTATION, AnimationAxis.Y);
         volumeKnobAnimation.setAmount(THREE.MathUtils.degToRad(-90));
         volumeKnobAnimation.setSpeed(THREE.MathUtils.degToRad(360));
+        volumeKnobAnimation.onComplete(this.updateFunctionalState.bind(this));
         volumeKnob.linearAnimation = volumeKnobAnimation;
         this.animations.push(volumeKnobAnimation);
 
@@ -242,13 +267,47 @@ export default class Television extends THREE.Group {
         antenna.tweenAnimationUp = new TWEEN.Tween(antenna.rotation).to(new THREE.Vector3(
             antenna.rotation.x - THREE.MathUtils.degToRad(-80),
             antenna.rotation.y,
-            antenna.rotation.z), 2000).easing(TWEEN.Easing.Quadratic.Out);
+            antenna.rotation.z), 2000).easing(TWEEN.Easing.Quadratic.Out).onComplete(this.updateFunctionalState.bind(this));
 
         antenna.tweenAnimationDown = new TWEEN.Tween(antenna.rotation).to(new THREE.Vector3(
             antenna.rotation.x,
             antenna.rotation.y,
-            antenna.rotation.z), 2000).easing(TWEEN.Easing.Quadratic.Out);
+            antenna.rotation.z), 2000).easing(TWEEN.Easing.Quadratic.Out).onComplete(this.updateFunctionalState.bind(this));
         antenna.up = false;
+    }
+
+    updateFunctionalState() {
+        const powerOn = THREE.MathUtils.radToDeg(this.children[3].children[1].rotation.y) === -90;
+        const volumeHigh = THREE.MathUtils.radToDeg(this.children[3].children[2].rotation.y) === -90;
+        const antennaUp = THREE.MathUtils.radToDeg(this.children[5].rotation.x) === 0;
+
+        const videoPlane = this.children[2].children[0];
+
+        if (powerOn) {
+            if (antennaUp) {
+                document.television_noise.pause();
+                document.television_movie.play();
+                videoPlane.material.map = this.movieTexture;
+                if (volumeHigh) {
+                    document.television_movie.volume = 1.0;
+                } else {
+                    document.television_movie.volume = 0.5;
+                }
+            } else {
+                document.television_movie.pause();
+                document.television_noise.play();
+                videoPlane.material.map = this.noiseTexture;
+                if (volumeHigh) {
+                    document.television_noise.volume = 1.0;
+                } else {
+                    document.television_noise.volume = 0.5;
+                }
+            }
+        } else {
+            document.television_noise.pause();
+            document.television_movie.pause();
+            videoPlane.material.map = this.blackTexture;
+        }
     }
 
     addPhysics() {
