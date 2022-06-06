@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import * as DATGUI from 'datgui';
 import * as CONTROLS from 'controls';
 import * as TWEEN from 'tween';
+import Stats from 'stats';
+
 
 //Own modules
 import Television from './objects/Television.js';
@@ -27,6 +29,7 @@ const tvff = new TelevisionFromFile();
 const tableff = new TableFromFile();
 const plant = new Plant();
 const clock = new THREE.Clock();
+const stats = new Stats();
 
 function main() {
     //Initializing the camera, scene and window
@@ -41,6 +44,9 @@ function main() {
     //Intializing the physics
     physicInit();
 
+    //Initalizing audio listener
+    audioInit();
+
     //Integration of the renderer output into the HTML structure
     document.getElementById('3d_content').appendChild(window.renderer.domElement);
 
@@ -54,6 +60,7 @@ function main() {
     tableFromFileInit();
     plantInit();
 
+    document.body.appendChild(stats.dom);
     mainLoop();
 
     //Initializing the light and the GUI
@@ -65,6 +72,7 @@ function main() {
 
 
 function mainLoop() {
+    stats.begin();
     const delta = clock.getDelta(); //Time since last frame
     knobTurnAuto(delta);
     TWEEN.update(); //Update tweens
@@ -73,6 +81,7 @@ function mainLoop() {
     }
     window.physics.update(delta); //Update the physics
     window.renderer.render(window.scene, window.camera); //Rendering the scene
+    stats.end();
     requestAnimationFrame(mainLoop); //Request for the next possible execution of the mainLoop()
 }
 
@@ -81,6 +90,7 @@ window.onmousemove = calculateMousePosition; //Mouse position
 window.onclick = executeRaycast; //Light functions
 window.onkeydown = keyDownAction; //Keyboard events
 window.onkeyup = keyUpAction;
+
 
 //Scene, window, camera, GUI and physics functions
 function sceneInit() {
@@ -124,6 +134,10 @@ function physicInit() {
     window.physics = new Physics(true);
     window.physics.setup(0, -200, 0, 1/960, true);
 }
+function audioInit() {
+    window.audioListener = new THREE.AudioListener();
+    window.camera.add (window.audioListener);
+}
 
 //Object functions
 function planeInit() {
@@ -160,6 +174,7 @@ function tableFromFileInit() {
 function plantInit() {
     plant.position.set(-60, 75, -60);
     plant.addPhysics();
+    plant.addSound();
     window.scene.add(plant);
 }
 
