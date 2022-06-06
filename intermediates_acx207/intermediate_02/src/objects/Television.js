@@ -10,6 +10,7 @@ export default class Television extends THREE.Group {
     constructor() {
         super();
         this.animations = [];
+        this.loadingDone = false;
         this.addParts();
     }
 
@@ -248,5 +249,27 @@ export default class Television extends THREE.Group {
             antenna.rotation.y,
             antenna.rotation.z), 2000).easing(TWEEN.Easing.Quadratic.Out);
         antenna.up = false;
+    }
+
+    addPhysics() {
+        const positions = [
+            [25.0, 18.2, 16.5],     // 0
+            [-25.0, 18.2, 16.5],    // 1
+            [-25.0, -16.8, 16.5],   // 2
+            [25.0, -16.8, 16.5],    // 3
+            [16.8, 11.0, -18.0],    // 4
+            [-16.8, 11.0, -18.0],   // 5
+            [-16.8, -16.8, -18.0],  // 6
+            [16.8, -16.8, -18.0]    // 7
+        ];
+        const indices = [
+            [0, 1, 2, 3],  // front
+            [1, 5, 6, 2],  // left
+            [4, 0, 3, 7],  // right
+            [4, 5, 1, 0],  // top
+            [3, 2, 6, 7],  // bottom
+            [5, 4, 7, 6]   // back
+        ];
+        window.physics.addConvexPolyhedron(this, 3, positions, indices, true);
     }
 }

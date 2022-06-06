@@ -7,13 +7,16 @@ import * as TWEEN from 'tween';
 import Television from './objects/Television.js';
 import TelevisionFromFile from './objects/TelevisionFromFile.js';
 import TableFromFile from "./objects/TableFromFile.js";
+import Plant from './objects/PlantFromFile.js';
 import Floor from "./objects/Floor.js";
 import Physics from './physics/Physics.js';
 
 //Event functions
 import {calculateMousePosition} from "./eventfunctions/calculateMousePosition.js";
 import {executeRaycast} from "./eventfunctions/executeRaycast.js";
+import {keyDownAction, keyUpAction} from "./eventfunctions/executeKeyAction.js";
 
+//Variable
 let floor;
 let plane;
 let pointLight;
@@ -22,6 +25,7 @@ let spotLight;
 let tv = new Television();
 const tvff = new TelevisionFromFile();
 const tableff = new TableFromFile();
+const plant = new Plant();
 const clock = new THREE.Clock();
 
 function main() {
@@ -45,15 +49,10 @@ function main() {
 
     //Initializing the geometric objects
     floorInit();
-    tv.position.set(-30, 55, 0);
-    tv.rotation.set(0, THREE.MathUtils.degToRad(10), 0);
-    tvff.position.set(30, 55, 0);
-    tvff.rotation.set(0, THREE.MathUtils.degToRad(-10), 0);
-    tableff.position.set(0, 0, 0);
-    tableff.addPhysics();
-    window.scene.add(tv);
-    window.scene.add(tvff);
-    window.scene.add(tableff);
+    tvInit();
+    tvFromFileInit();
+    tableFromFileInit();
+    plantInit();
 
     mainLoop();
 
@@ -78,8 +77,10 @@ function mainLoop() {
 }
 
 window.onload = main; //fired when the entire page loads, including its content
-window.onmousemove = calculateMousePosition;
-window.onclick = executeRaycast;
+window.onmousemove = calculateMousePosition; //Mouse position
+window.onclick = executeRaycast; //Light functions
+window.onkeydown = keyDownAction; //Keyboard events
+window.onkeyup = keyUpAction;
 
 //Scene, window, camera, GUI and physics functions
 function sceneInit() {
@@ -89,7 +90,7 @@ function sceneInit() {
 function windowInit() {
     window.renderer = new THREE.WebGLRenderer({antialias: true}); //Renderer-Object
     window.renderer.setSize(window.innerWidth, window.innerHeight); //Size of the Framebuffer
-    window.renderer.setClearColor(0x000000); //Background color of the frame buffer
+    window.renderer.setClearColor(0xFFFFFF); //Background color of the frame buffer
     window.renderer.shadowMap.enabled = true;
 }
 function onWindowResize(){
@@ -106,7 +107,7 @@ function cameraInit() {
         0.1, //Distance of the near-plane
         1000); //Distance of the far-plane
 
-    window.camera.position.set(-100, 200, 200);
+    window.camera.position.set(-100, 300, 300);
 
 }
 function guiInit() {
@@ -121,7 +122,7 @@ function guiInit() {
 }
 function physicInit() {
     window.physics = new Physics(true);
-    window.physics.setup(0, -200, 0, 1/20, true);
+    window.physics.setup(0, -200, 0, 1/960, true);
 }
 
 //Object functions
@@ -138,6 +139,28 @@ function floorInit() {
     floor = new Floor();
     floor.position.set(0, 0, 0);
     window.scene.add(floor);
+}
+function tvInit() {
+    tv.position.set(-30, 55.8, 0);
+    tv.rotation.set(0, THREE.MathUtils.degToRad(10), 0);
+    tv.addPhysics();
+    window.scene.add(tv);
+}
+function tvFromFileInit() {
+    tvff.position.set(30, 55.8, 0);
+    tvff.rotation.set(0, THREE.MathUtils.degToRad(-10), 0);
+    tvff.addPhysics();
+    window.scene.add(tvff);
+}
+function tableFromFileInit() {
+    tableff.position.set(0, 0, 0);
+    tableff.addPhysics();
+    window.scene.add(tableff);
+}
+function plantInit() {
+    plant.position.set(-60, 75, -60);
+    plant.addPhysics();
+    window.scene.add(plant);
 }
 
 //Light functions
